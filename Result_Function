@@ -1,0 +1,66 @@
+function result_trial(fileName)
+sheetNum = 1;
+[~,~,raw]=xlsread(fileName);
+[row,~]=size(raw);
+col_header={'Score Right 1','Score Left 1','Score Right 2','Score Left 2'};
+xlswrite(fileName,col_header,sheetNum,'H1');
+[~,yy] = xlsread(fileName,sheetNum);
+ 
+scorer1 = ones(1,row);
+scorer2 = ones(1,row);
+scorel1 = ones(1,row);
+scorel2 = ones(1,row);
+ 
+for i=2:row
+    
+    m = yy{i,3};
+    q = yy{i,4};
+    f = yy{i,5};
+    j = yy{i,6};
+    s = yy{i,7};
+    
+    y1 = strfind(lower(string(m)),lower(string(q)));
+    y2 = strfind(lower(string(m)),lower(string(f)));
+    y3 = strfind(lower(string(m)),lower(string(j)));
+    y4 = strfind(lower(string(m)),lower(string(s)));
+    
+    
+    
+    
+    if isempty(y1)~=0
+        scorer1(i) = 0;
+    end
+    
+    if isempty(y2) ~=0
+        scorel1(i) = 0;
+    end
+    
+    if isempty(y3)~=0
+        scorer2(i) = 0;
+    end
+    
+    if isempty(y4)~=0
+        scorel2(i) = 0;
+    end
+    xlswrite(fileName,scorer1(i),sheetNum,['H' num2str(i)]);
+    xlswrite(fileName,scorel1(i),sheetNum,['I' num2str(i)]);
+    xlswrite(fileName,scorer2(i),sheetNum,['J' num2str(i)]);
+    xlswrite(fileName,scorel2(i),sheetNum,['K' num2str(i)]);
+end
+ 
+ 
+RE_1_Correct = sum(scorer1)/length(scorer1)*100;
+LE_1_Correct =sum(scorel1)/length(scorel1)*100;
+RE_2_Correct =sum(scorer2)/length(scorer2)*100;
+LE_2_Correct =sum(scorel2)/length(scorel2)*100;
+ 
+xlswrite(fileName,RE_1_Correct,sheetNum,['H' num2str(i+2)]);
+xlswrite(fileName,LE_1_Correct,sheetNum,['I' num2str(i+2)]);
+xlswrite(fileName,RE_2_Correct,sheetNum,['J' num2str(i+2)]);
+xlswrite(fileName,LE_2_Correct,sheetNum,['K' num2str(i+2)]);
+ 
+X = categorical({'RE 1 Correct','LE 1 Correct','RE 2 Correct','LE 2 Correct'});
+Y = [RE_1_Correct,LE_1_Correct,RE_2_Correct,LE_2_Correct];
+ 
+bar(X,Y)
+
