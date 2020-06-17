@@ -1,0 +1,185 @@
+fileName = '';
+
+sheetNum = 1;
+
+Row_Num =1;
+
+projectdir = 'C:\Users\hp\Documents\MATLAB\combined dichotic'; %Give file directory
+
+% Please specify resutls file dir
+
+% Read files from specific directory
+
+dirinfo = dir( fullfile(projectdir, '*.wav') ); % Reads all the .WAV files in that specific directory
+
+numfiles = length(dirinfo);
+
+order_to_play = randperm(numfiles);% Randomizes the audio files
+
+col_header={'Row Number','Condition','Stimulus','Response Right 1','Response Left 1','Response Right 2','Response Left 2'};
+
+xlswrite(fileName,col_header,sheetNum,'A1');
+
+for K = 1:numfiles % Determines the order in which the stimulus is played
+
+thisfile = fullfile(projectdir, dirinfo(order_to_play(K)).name )
+
+Row_Num = Row_Num+1;
+
+stimulus = order_to_play(K);
+
+switch stimulus
+
+case {21,102,86,10,69,128,22,120,143,99,111,144,118,166,138,89,66,136,79,105} % Control condition Enter random number depending on your number of audio files
+
+audio = audioread(thisfile); % Reads an audio file
+
+sound(audio,44100) % Plays an audio file
+
+condition = 1;
+
+case {115,168,173,139,119,174,33,106,113,150,117,104,87,80,112,160,68,1,167,110} % Right Delay condition Enter random number depending on your number of audio files
+
+audio = audioread(thisfile);
+
+y=delayseq(audio(:,2),0.2,44100); % Adds a time lag of 0.2 seconds to right channel only
+
+audio(:,2)=y;
+
+sound(audio,44100)
+
+condition = 2;
+
+case {107,176,17,51,114,75,123,125,103,12,93,152,70,82,76,83,121,156,27,91} % Left Delay condition Enter random number depending on your number of audio files
+
+audio = audioread(thisfile);
+
+y=delayseq(audio(:,1),0.2,44100);% Adds a time lag of 0.2 seconds to left channel only
+
+audio(:,1)=y;
+
+sound(audio,44100)
+
+condition = 3;
+
+case {90,41,140,126,81,24,74,171,147,162,2,124,18,145,53,50,85,169,78,129} % Right Attention condition Enter random number depending on your number of audio files
+
+audio = audioread(thisfile);
+
+y=delayseq(audio,1,44100);
+
+z=audioread('tone r.WAV'); % A wave file with a pure tone in right channel
+
+sound(z,44100),sound(y,44100)% Plays both the tone and dichotic stimulus
+
+condition = 4;
+
+case {142,60,34,47,57,30,127,71,40,108,141,67,25,158,88,94,130,72,101,95} % Left Attention condition Enter random number depending on your number of audio files
+
+audio = audioread(thisfile);
+
+y=delayseq(audio,1,44100);
+
+z=audioread('tone l.WAV'); % A wave file with a pure tone in left channel
+
+sound(z,44100),sound(y,44100)
+
+condition = 5;
+
+case {77,109,165,9,134,148,179,54,42,96,65,84,56,131,159,153,122,5,146,154} % Right Delay Right Attention condition Enter random number depending on your number of audio files
+
+audio = audioread(thisfile);
+
+y=delayseq(audio,1,44100);%
+
+z=audioread('tone r.WAV');
+
+a=delayseq(y(:,2),0.2,44100);
+
+y(:,2)=a;
+
+sound(z,44100),sound(y,44100);
+
+condition = 6;
+
+case {14,161,19,133,63,16,46,6,11,55,97,175,155,4,178,37,149,49,58,164} % Left Delay Left Attention condition Enter random number depending on your number of audio files
+
+audio = audioread(thisfile);
+
+y=delayseq(audio,1,44100);
+
+z=audioread('tone l.WAV');
+
+a=delayseq(y(:,1),0.2,44100);
+
+y(:,1)=a;
+
+sound(z,44100),sound(y,44100)
+
+condition = 7;
+
+case {92,52,100,45,38,163,62,137,170,39,48,172,23,157,43,44,98,177,135,116} % Right Delay Left Attention condition Enter random number depending on your number of audio files
+
+audio = audioread(thisfile);
+
+y=delayseq(audio,1,44100);
+
+z=audioread('tone l.WAV');
+
+a=delayseq(y(:,2),0.2,44100);
+
+y(:,2)=a;
+
+sound(z,44100),sound(y,44100)
+
+condition = 8;
+
+case {61,8,26,3,59,180,151,132,64,73,20,28,29,32,7,13,15,31,35,36} % Left Delay Right Attention condition Enter random number depending on your number of audio files
+
+audio = audioread(thisfile);
+
+y=delayseq(audio,1,44100);
+
+z=audioread('tone r.WAV');
+
+a=delayseq(y(:,1),0.2,44100);
+
+y(:,1)=a;
+
+sound(z,44100),sound(y,44100)
+
+condition = 9.;
+
+end
+
+respr1 = input( 'Key in responses for Right Ear = ' ,'s'); % Type in the responses using single inverted coma
+
+respl1 = input( 'Key in responses for Left Ear = ' ,'s');
+
+respr2 = input( 'Key in responses for Right Ear= ' ,'s');
+
+respl2 = input( 'Key in responses for Left Ear = ' ,'s');
+
+xlswrite(fileName,Row_Num,sheetNum,['A' num2str(Row_Num)]);
+
+xlswrite(fileName,condition,sheetNum,['B' num2str(Row_Num)]);
+
+xlswrite(fileName,cellstr(thisfile),sheetNum,['C' num2str(Row_Num)]);
+
+xlswrite(fileName,cellstr(respr1),sheetNum,['D' num2str(Row_Num)]);
+
+xlswrite(fileName,cellstr(respl1),sheetNum,['E' num2str(Row_Num)]);
+
+xlswrite(fileName,cellstr(respr2),sheetNum,['F' num2str(Row_Num)]);
+
+xlswrite(fileName,cellstr(respl2),sheetNum,['G' num2str(Row_Num)]);
+
+fprintf('*************************************\n')
+
+fprintf('Press Enter to Continue\n')
+
+pause
+
+end
+
+result_trial(fileName)
